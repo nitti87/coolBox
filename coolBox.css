@@ -1,0 +1,54 @@
+:root {
+    --main-fontSize: 15px
+}
+
+[data-popup-holder='container'] {
+    position: absolute;
+    height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 57;
+    background: rgba(255, 255, 255, .6);
+}
+
+[data-popup-holder='main'] {
+    position: absolute;
+    font: var(--main-fontSize) "Segoe UI", sans-serif;
+}
+
+[data-popup-holder='main'].popup_info {
+    background: #bde5f8;
+    color: #00539bb7;
+    box-shadow: 0 0 3px #00539bb7, 0 0 3px #00539baf inset;
+}
+
+[data-popup-holder='main'].popup_warning {
+    background: #FEEFB3;
+    color: #9f5f00c4;
+    box-shadow: 0 0 3px #9f5f00c4, 0 0 3px #9f5f00d2 inset;
+}
+ 
+[data-popup-holder='main'].popup_error {
+    background: #FFBABA;
+    color: rgb(216, 0, 11);
+    box-shadow: 0 0 3px rgba(216, 0, 11, 0.774), 0 0 3px rgba(216, 0, 11, 0.747) inset;
+}
+
+[data-popup-holder='insideTxt'] {
+    vertical-align: middle;
+    width: 100%;
+    display: table-cell;
+}
+
+[data-popup-holder='titlebar'].styleTitleHead {
+    position: absolute;
+    background: #0000000d;
+    width: 100%;
+}
+
+[data-popup-holder='title'].styleTitle {
+    font-size: 11px;
+    padding: 5px;
+    margin-top: -5px;
+}
