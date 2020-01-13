@@ -6,8 +6,13 @@ window.Box = class {
     this.settings = {
       top: setting.top || '50%', left: setting.left || '50%',
       height: setting.height || '50px', width: setting.width || '180px',
-      if_electron: navigator.userAgent.indexOf("Electron") >= 0 ? { include: setting.electron.include } : false
-    }
+      if_electron: navigator.userAgent.indexOf("Electron") >= 0 ? setting.electron || false : false,
+      fadeInTime: typeof setting.fade === 'object' ? setting.fade.fadeInTime || false : false,
+      waitForFadeOut: typeof setting.fade === 'object' && setting.fade.fadeInTime ? setting.fade.waitForFadeOut || 3000 : undefined, 
+      fadeOutTime: typeof setting.fade === 'object' && setting.fade.fadeInTime ? setting.fade.fadeOutTime || setting.fade.fadeInTime : undefined, 
+      show: setting.fade ? false : setting.show || true,
+      hideAfter: setting.fade ? false : setting.hideAfter || 3000
+    };
   }
 
   type( as_what, styleAs = {} ) {
@@ -63,8 +68,10 @@ window.Box = class {
       const which_el = styling.actLikePopup ? "[data-popup-holder='container']" : "[data-popup-holder='main']";
       const this_zIndex = window.document.defaultView.getComputedStyle(document.querySelector(which_el))
         .getPropertyValue('z-index');
-      document.querySelectorAll(this.settings.if_electron.include).forEach((el) => { el.style.zIndex = (this_zIndex + 1) })
+      document.querySelectorAll(this.settings.if_electron).forEach((el) => { el.style.zIndex = (this_zIndex + 1) })
     }
+
+    this.settings.fadeInTime ? this.fade() : this.show()
 
     return this
   }
@@ -90,5 +97,29 @@ window.Box = class {
     main.children[1].style.cssText = `height: ${this.settings.height}; padding-left: ${inside_txt_paddingLeft}; ${title_height}`
 
     return this
+  }
+
+  show(isTrue = false) {
+    const showThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.which_index}']`)]
+    
+    showThese.forEach((el) => {
+      !isTrue ? (el.style.display = 'block', setTimeout(() => { this.show(true) }, this.settings.hideAfter)) : el.style.display = 'none'
+    })
+  }
+
+  fade(isTrue = false) {
+    const fadeThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.which_index}']`)]
+
+    fadeThese.forEach((el) => {
+      el.style.opacity = !isTrue ? 0 : 1;
+      el.style.display = 'block'
+      
+      let timer = setInterval(() => {
+        el.style.opacity < 0 || el.style.opacity > 1 && !isTrue ? (clearInterval(timer), (!isTrue ? setTimeout(() => { this.fade(true) }, this.settings.waitForFadeOut) : el.remove())) : timer;
+
+        !isTrue ? el.style.opacity -= -(50 / this.settings.fadeInTime) : el.style.opacity -= (50 / this.settings.fadeOutTime)
+      }, 50);
+      
+    })
   }
 } 
