@@ -10,11 +10,13 @@
     width: 100%;
     z-index: 57;
     background: rgba(255, 255, 255, .6);
+    display: none;
 }
 
 [data-popup-holder='main'] {
     position: absolute;
     font: var(--main-fontSize) "Segoe UI", sans-serif;
+    display: none;
 }
 
 [data-popup-holder='main'].popup_info {
