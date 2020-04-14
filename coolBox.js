@@ -23,6 +23,7 @@ window.Box = class {
       actLikePopup: styleAs.actLikePopup || false,
       container_bgColor: styleAs.container_bgColor || 'rgba(255, 255, 255, .6)',
       dialog_bgColor: typeof styleAs.dialog !== 'object' ? styleAs.dialog_bgColor || '#ffffff' : styleAs.dialog.backgroundColor || '#ffffff',
+      title_bgColor: styleAs.title_bgColor || '#0000000d',
       dialog_boxShadow: typeof styleAs.dialog !== 'object' ? styleAs.dialog_boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)' : styleAs.dialog.boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)',
       startFrom: styleAs.startFrom || 'bottom left'
     }
@@ -38,7 +39,7 @@ window.Box = class {
 
     main.style.cssText = `height: ${this.settings.height}; width: ${this.settings.width}; ${styleMain}`
     main.setAttribute('data-popup-holder', as_what !== 'dialog' ? 'main' : 'dialogMain')
-    main.innerHTML = `<div data-popup-holder="titlebar"> <div data-popup-holder="title"></div> <div data-popup-holder="icon"></div> </div>`
+    main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>`
 
     if (!styling.actLikePopup && as_what !== 'dialog') {
       main.classList.add(`popup_${as_what}`)
@@ -99,7 +100,7 @@ window.Box = class {
     x_button_div.addEventListener('click', () => { this.settings.autocloser ? (this.settings.fadeInTime ? this.fade(true) : this.show(true, true)) : this.show(true, false) })
     
     insideTxt_div.setAttribute('data-popup-holder', 'insideTxt')
-    insideTxt_div.innerHTML = inside_txt
+    insideTxt_div.innerText = inside_txt
     main.appendChild(insideTxt_div)
 
     title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.parentElement.classList.add('styleTitleHead')) : null
@@ -135,3 +136,4 @@ window.Box = class {
       }, 50);
     })
   }
+}
