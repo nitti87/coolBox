@@ -1,5 +1,4 @@
 window.Box = class {
-
   constructor( onEl, setting = {} ) {
     this.onElement = onEl
     this.which_index = 0
@@ -21,6 +20,8 @@ window.Box = class {
   type( as_what, styleAs = {} ) {
     const styling = {
       actLikePopup: styleAs.actLikePopup || false,
+      main_bgColor: styleAs.main_bgColor ? `background-color: ${styleAs.main_bgColor};` : '',
+      main_boxShadow: styleAs.main_boxShadow ? `box-shadow: ${styleAs.main_boxShadow};` : '',
       container_bgColor: styleAs.container_bgColor || 'rgba(255, 255, 255, .6)',
       dialog_bgColor: typeof styleAs.dialog !== 'object' ? styleAs.dialog_bgColor || '#ffffff' : styleAs.dialog.backgroundColor || '#ffffff',
       title_bgColor: styleAs.title_bgColor || '#0000000d',
@@ -37,7 +38,7 @@ window.Box = class {
     (styling.actLikePopup ? `top: ${this.settings.top}; left: ${this.settings.left}; transform: translate(-${this.settings.top}, -${this.settings.left}` : '') : 
     `background-color: ${styling.dialog_bgColor}; box-shadow: ${styling.dialog_boxShadow}`
 
-    main.style.cssText = `height: ${this.settings.height}; width: ${this.settings.width}; ${styleMain}`
+    main.style.cssText = `height: ${this.settings.height}; width: ${this.settings.width}; ${styleMain}; ${styling.main_boxShadow} ${styling.main_bgColor} `
     main.setAttribute('data-popup-holder', as_what !== 'dialog' ? 'main' : 'dialogMain')
     main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>`
 
@@ -82,12 +83,13 @@ window.Box = class {
   }
 
   text(txt) {
-    const [title, titleText_fontSize, x_button,  inside_txt, inside_txt_fontSize, inside_txt_paddingLeft, main, insideTxt_div] = [
+    const [title, titleText_fontSize, x_button,  inside_txt, inside_txt_fontSize, text_yPos, inside_txt_paddingLeft, main, insideTxt_div] = [
       typeof txt === 'object' ? (typeof txt.title === 'object' ? txt.title.text : txt.titleText) || '' : '',
       typeof txt === 'object' && typeof txt.title === 'object' ? txt.title.fontSize || '12px' : '12px', 
       this.settings.x_button,
       typeof txt === 'object' ? (typeof txt.inside === 'object' ? txt.inside.text : txt.inside_text) || '' : txt,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.fontSize || '14px' : '14px', 
+      typeof txt === 'object' && typeof txt.text_yPos === 'string' ? (/center|top/g.test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.paddingLeft || '10px' : '10px',
       this.as_what !== 'dialog' ? document.querySelector(`[data-index='${this.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
       document.createElement('div')
@@ -105,20 +107,22 @@ window.Box = class {
 
     title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.parentElement.classList.add('styleTitleHead')) : null
     title_div.style.fontSize = titleText_fontSize
-    const title_height = title ? `padding-top: ${parseInt(window.document.defaultView.getComputedStyle(title_div).getPropertyValue('padding')) / 2}px` : ''
+
+    const where_textYpos = text_yPos ? (text_yPos === 'center' ? 'top: 50%;' : 'top: 25%;') : ''
+    const textPos = !title ? `margin-top: -${(parseInt(inside_txt_fontSize) / 2)}px; ${where_textYpos}` : ''
 
     x_button ? (title ? title_div.appendChild(x_button_div) : insideTxt_div.appendChild(x_button_div)) : null
 
-    insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${title_height}; font-size: ${inside_txt_fontSize};`
+    insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${textPos}; font-size: ${inside_txt_fontSize};`
 
     return this
   }
 
-  show(closeBox = false, time = true) { 
+  show(closeBox = false, timer = true) {
     const showThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']")]
 
     showThese.forEach((el) => {
-      !closeBox ? (el.style.display = 'block', ( time ? setTimeout(() => { this.show(true) }, this.settings.hideAfter) : this.show(true, false) )) : el.remove()
+      timer ? (!closeBox ? (el.style.display = 'block', setTimeout(() => { this.show(true, false) }, this.settings.hideAfter) ) : el.remove()) : (!closeBox ? el.style.display = 'block' : el.remove())
     })
   }
 
