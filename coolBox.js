@@ -89,7 +89,7 @@ window.Box = class {
       this.settings.x_button,
       typeof txt === 'object' ? (typeof txt.inside === 'object' ? txt.inside.text : txt.inside_text) || '' : txt,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.fontSize || '14px' : '14px', 
-      typeof txt === 'object' && typeof txt.text_yPos === 'string' ? (/center|top/g.test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
+      typeof txt === 'object' && typeof txt.text_yPos === 'string' ? ((/\b(center|top)\b/).test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.paddingLeft || '10px' : '10px',
       this.as_what !== 'dialog' ? document.querySelector(`[data-index='${this.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
       document.createElement('div')
