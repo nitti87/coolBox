@@ -83,12 +83,14 @@ window.Box = class {
   }
 
   text(txt) {
-    const [title, titleText_fontSize, x_button,  inside_txt, inside_txt_fontSize, text_yPos, inside_txt_paddingLeft, main, insideTxt_div] = [
+    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div] = [
       typeof txt === 'object' ? (typeof txt.title === 'object' ? txt.title.text : txt.titleText) || '' : '',
       typeof txt === 'object' && typeof txt.title === 'object' ? txt.title.fontSize || '12px' : '12px', 
+      typeof txt === 'object' && typeof txt.title === 'object' ? `color: ${txt.title.color}` || '' : '', 
       this.settings.x_button,
       typeof txt === 'object' ? (typeof txt.inside === 'object' ? txt.inside.text : txt.inside_text) || '' : txt,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.fontSize || '14px' : '14px', 
+      typeof txt === 'object' && typeof txt.inside === 'object' ? `color: ${txt.inside.color}` || '' : '', 
       typeof txt === 'object' && typeof txt.text_yPos === 'string' ? ((/\b(center|top)\b/).test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.paddingLeft || '10px' : '10px',
       this.as_what !== 'dialog' ? document.querySelector(`[data-index='${this.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
@@ -105,7 +107,7 @@ window.Box = class {
     insideTxt_div.innerText = inside_txt
     main.appendChild(insideTxt_div)
 
-    title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.parentElement.classList.add('styleTitleHead')) : null
+    title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.style.cssText = titleText_color, title_div.parentElement.classList.add('styleTitleHead')) : null
     title_div.style.fontSize = titleText_fontSize
 
     const where_textYpos = text_yPos ? (text_yPos === 'center' ? 'top: 50%;' : 'top: 25%;') : ''
@@ -113,7 +115,7 @@ window.Box = class {
 
     x_button ? (title ? title_div.appendChild(x_button_div) : insideTxt_div.appendChild(x_button_div)) : null
 
-    insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${textPos}; font-size: ${inside_txt_fontSize};`
+    insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${textPos}; font-size: ${inside_txt_fontSize}; ${inside_text_color}`
 
     return this
   }
@@ -126,8 +128,9 @@ window.Box = class {
     })
   }
 
-  fade(closeBox = false) {
+  fade(closeBox = false, fTime = 0) {
     const fadeThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']")]
+    const fadeOutTime =  fTime !== 0 ? fTime : this.settings.fadeOutTime
 
     fadeThese.forEach((el) => {
       el.style.opacity = !closeBox ? 0 : 1;
@@ -136,8 +139,16 @@ window.Box = class {
       let timer = setInterval(() => {
         el.style.opacity < 0 || el.style.opacity > 1 && !closeBox ? (clearInterval(timer), (!closeBox ? setTimeout(() => { this.fade(true) }, this.settings.waitForFadeOut) : el.remove())) : timer;
 
-        !closeBox ? el.style.opacity -= -(50 / this.settings.fadeInTime) : el.style.opacity -= (50 / this.settings.fadeOutTime)
+        !closeBox ? el.style.opacity -= -(50 / this.settings.fadeInTime) : el.style.opacity -= (50 / fadeOutTime)
       }, 50);
     })
+  }
+
+  close(option = {}) {
+    const fadeOutTime = typeof option === 'object' && option.fadeOutTime ? option.fadeOutTime : undefined
+
+    fadeOutTime ? this.fade(true, fadeOutTime) : this.show(true, false)
+
+    return this
   }
 }
