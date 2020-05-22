@@ -1,4 +1,4 @@
-window.Box = class {
+class Box {
   constructor( onEl, setting = {} ) {
     this.onElement = onEl
     this.which_index = 0
@@ -26,30 +26,34 @@ window.Box = class {
       dialog_bgColor: typeof styleAs.dialog !== 'object' ? styleAs.dialog_bgColor || '#ffffff' : styleAs.dialog.backgroundColor || '#ffffff',
       title_bgColor: styleAs.title_bgColor || '#0000000d',
       dialog_boxShadow: typeof styleAs.dialog !== 'object' ? styleAs.dialog_boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)' : styleAs.dialog.boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)',
-      startFrom: styleAs.startFrom || 'bottom left'
+      startFrom: styleAs.startFrom || 'bottom left',
+      only_this: styleAs.only_this || false
     }
-    this.as_what = as_what
+    this.typeAs = as_what.toLowerCase()
 
     const [containers, main] = [document.createElement('div'), document.createElement('div')]
     containers.setAttribute('data-popup-holder', 'container') 
     containers.style.backgroundColor = styling.container_bgColor
 
-    const styleMain = as_what !== 'dialog' ? 
+    const styleMain = this.typeAs !== 'dialog' ? 
     (styling.actLikePopup ? `top: ${this.settings.top}; left: ${this.settings.left}; transform: translate(-${this.settings.top}, -${this.settings.left}` : '') : 
     `background-color: ${styling.dialog_bgColor}; box-shadow: ${styling.dialog_boxShadow}`
 
     main.style.cssText = `height: ${this.settings.height}; width: ${this.settings.width}; ${styleMain}; ${styling.main_boxShadow} ${styling.main_bgColor} `
-    main.setAttribute('data-popup-holder', as_what !== 'dialog' ? 'main' : 'dialogMain')
+    main.setAttribute('data-popup-holder', this.typeAs !== 'dialog' ? 'main' : 'dialogMain')
     main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>`
 
-    if (!styling.actLikePopup && as_what !== 'dialog') {
-      main.classList.add(`popup_${as_what}`)
+    if (!styling.actLikePopup && this.typeAs !== 'dialog') {
+      main.classList.add(`popup_${this.typeAs}`)
       main.setAttribute('data-index', document.querySelectorAll("[data-popup-holder='main']").length)
+      styling.only_this ? main.setAttribute('data-onlyThis', true) : undefined
       main.setAttribute('data-location', styling.startFrom)
       this.which_index = document.querySelectorAll("[data-popup-holder='main']").length
 
-      const [winHeight, prev_el_height] = [ window.innerHeight, document.querySelector(`[data-index='${this.which_index - 1}']`) ]
-      const new_position = (prev_el_height === null ? 0 : prev_el_height.clientHeight + 15)
+      const [winHeight, prev_el] = [ window.innerHeight, document.querySelector(`[data-index='${this.which_index - 1}']`) ]
+      const new_position = (prev_el === null ? 0 : prev_el.clientHeight + 15)
+
+      prev_el !== null && prev_el.hasAttribute('data-onlyThis') ? prev_el.remove() : undefined
 
       switch (styling.startFrom) {
         case 'bottom left':
@@ -67,7 +71,7 @@ window.Box = class {
       }
     }
 
-    !styling.actLikePopup && as_what !== 'dialog' ? document.querySelector(this.onElement).appendChild(main) : (containers.appendChild(main), document.querySelector(this.onElement).appendChild(containers))
+    !styling.actLikePopup && this.typeAs !== 'dialog' ? document.querySelector(this.onElement).appendChild(main) : (containers.appendChild(main), document.querySelector(this.onElement).appendChild(containers))
 
     // Set the 'z-index' to a value that's greater than itself
     if (this.settings.if_electron) {
@@ -83,7 +87,7 @@ window.Box = class {
   }
 
   text(txt) {
-    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div] = [
+    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div, updateText] = [
       typeof txt === 'object' ? (typeof txt.title === 'object' ? txt.title.text : txt.titleText) || '' : '',
       typeof txt === 'object' && typeof txt.title === 'object' ? txt.title.fontSize || '12px' : '12px', 
       typeof txt === 'object' && typeof txt.title === 'object' ? `color: ${txt.title.color}` || '' : '', 
@@ -93,8 +97,9 @@ window.Box = class {
       typeof txt === 'object' && typeof txt.inside === 'object' ? `color: ${txt.inside.color}` || '' : '', 
       typeof txt === 'object' && typeof txt.text_yPos === 'string' ? ((/\b(center|top)\b/).test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.paddingLeft || '10px' : '10px',
-      this.as_what !== 'dialog' ? document.querySelector(`[data-index='${this.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
-      document.createElement('div')
+      this.typeAs !== 'dialog' ? document.querySelector(`[data-index='${this.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
+      document.createElement('div'),
+      typeof txt === 'object' && typeof txt.updateText === 'function' ? txt.updateText : undefined
     ]
 
     const [title_div, x_button_div] = [main.children[0].firstElementChild, document.createElement('div')]
@@ -104,8 +109,9 @@ window.Box = class {
     x_button_div.addEventListener('click', () => { this.settings.autocloser ? (this.settings.fadeInTime ? this.fade(true) : this.show(true, true)) : this.show(true, false) })
     
     insideTxt_div.setAttribute('data-popup-holder', 'insideTxt')
-    insideTxt_div.innerText = inside_txt
     main.appendChild(insideTxt_div)
+    
+    !updateText ? insideTxt_div.innerText = inside_txt : updateText(insideTxt_div)
 
     title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.style.cssText = titleText_color, title_div.parentElement.classList.add('styleTitleHead')) : null
     title_div.style.fontSize = titleText_fontSize
