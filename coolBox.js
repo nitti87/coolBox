@@ -1,7 +1,6 @@
 class Box {
   constructor( onEl, setting = {} ) {
     this.onElement = onEl
-    this.which_index = 0
     this.settings = {
       top: setting.top || '50%', left: setting.left || '50%',
       height: setting.height || '50px', 
@@ -29,31 +28,39 @@ class Box {
       startFrom: styleAs.startFrom || 'bottom left',
       only_this: styleAs.only_this || false
     }
-    this.typeAs = as_what.toLowerCase()
+
+    this.transfer = {
+      typeAs: as_what.toLowerCase(),
+      not_only_this: (document.querySelectorAll("[data-onlythis='true']").length == 0 && !styling.only_this) || document.querySelectorAll(`[data-popup-holder='${!styling.actLikePopup && as_what.toLowerCase() !== 'dialog' ? 'main' : 'container'}']`).length == 0,
+      which_index: 0
+    }
 
     const [containers, main] = [document.createElement('div'), document.createElement('div')]
     containers.setAttribute('data-popup-holder', 'container') 
     containers.style.backgroundColor = styling.container_bgColor
 
-    const styleMain = this.typeAs !== 'dialog' ? 
+    const styleMain = this.transfer.typeAs !== 'dialog' ? 
     (styling.actLikePopup ? `top: ${this.settings.top}; left: ${this.settings.left}; transform: translate(-${this.settings.top}, -${this.settings.left}` : '') : 
     `background-color: ${styling.dialog_bgColor}; box-shadow: ${styling.dialog_boxShadow}`
 
     main.style.cssText = `height: ${this.settings.height}; width: ${this.settings.width}; ${styleMain}; ${styling.main_boxShadow} ${styling.main_bgColor} `
-    main.setAttribute('data-popup-holder', this.typeAs !== 'dialog' ? 'main' : 'dialogMain')
+    main.setAttribute('data-popup-holder', this.transfer.typeAs !== 'dialog' ? 'main' : 'dialogMain')
     main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>`
 
-    if (!styling.actLikePopup && this.typeAs !== 'dialog') {
-      main.classList.add(`popup_${this.typeAs}`)
-      main.setAttribute('data-index', document.querySelectorAll("[data-popup-holder='main']").length)
-      styling.only_this ? main.setAttribute('data-onlyThis', true) : undefined
+    if (!styling.actLikePopup && this.transfer.typeAs !== 'dialog') { 
+      const mainLength = document.querySelectorAll("[data-popup-holder='main']").length
+
+      main.classList.add(`popup_${this.transfer.typeAs}`)
+      main.setAttribute('data-index', mainLength)
+      styling.only_this ? main.setAttribute('data-onlythis', true) : undefined
       main.setAttribute('data-location', styling.startFrom)
-      this.which_index = document.querySelectorAll("[data-popup-holder='main']").length
+      this.transfer.which_index = this.transfer.not_only_this ? mainLength : mainLength - 1
 
-      const [winHeight, prev_el] = [ window.innerHeight, document.querySelector(`[data-index='${this.which_index - 1}']`) ]
+      const [winHeight, prev_el] = [ 
+        window.innerHeight, 
+        document.querySelector(`[data-index='${this.transfer.which_index - 1}']`),
+      ]
       const new_position = (prev_el === null ? 0 : prev_el.clientHeight + 15)
-
-      prev_el !== null && prev_el.hasAttribute('data-onlyThis') ? prev_el.remove() : undefined
 
       switch (styling.startFrom) {
         case 'bottom left':
@@ -71,7 +78,9 @@ class Box {
       }
     }
 
-    !styling.actLikePopup && this.typeAs !== 'dialog' ? document.querySelector(this.onElement).appendChild(main) : (containers.appendChild(main), document.querySelector(this.onElement).appendChild(containers))
+     if(this.transfer.not_only_this) {
+       !styling.actLikePopup && this.transfer.typeAs !== 'dialog' ? document.querySelector(this.onElement).appendChild(main) : (containers.appendChild(main), document.querySelector(this.onElement).appendChild(containers))
+    }
 
     // Set the 'z-index' to a value that's greater than itself
     if (this.settings.if_electron) {
@@ -97,12 +106,12 @@ class Box {
       typeof txt === 'object' && typeof txt.inside === 'object' ? `color: ${txt.inside.color}` || '' : '', 
       typeof txt === 'object' && typeof txt.text_yPos === 'string' ? ((/\b(center|top)\b/).test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.paddingLeft || '10px' : '10px',
-      this.typeAs !== 'dialog' ? document.querySelector(`[data-index='${this.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
-      document.createElement('div'),
+      this.transfer.typeAs !== 'dialog' ? document.querySelector(`[data-index='${this.transfer.which_index}']`) : document.querySelector(`[data-popup-holder='dialogMain']`),
+      this.transfer.not_only_this ? document.createElement('div') : document.querySelector('[data-popup-holder="insideTxt"]'),
       typeof txt === 'object' && typeof txt.updateText === 'function' ? txt.updateText : undefined
     ]
 
-    const [title_div, x_button_div] = [main.children[0].firstElementChild, document.createElement('div')]
+    const [title_div, x_button_div, x_button_pos] = [main.children[0].firstElementChild, document.createElement('div'), document.createElement('div')]
 
     x_button_div.innerHTML = '&#10005;'
     x_button_div.classList.add('x_button')
@@ -111,6 +120,9 @@ class Box {
     insideTxt_div.setAttribute('data-popup-holder', 'insideTxt')
     main.appendChild(insideTxt_div)
     
+    x_button_pos.classList.add('x_button_pos')
+    main.appendChild(x_button_pos)
+
     !updateText ? insideTxt_div.innerText = inside_txt : updateText(insideTxt_div)
 
     title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.style.cssText = titleText_color, title_div.parentElement.classList.add('styleTitleHead')) : null
@@ -119,7 +131,9 @@ class Box {
     const where_textYpos = text_yPos ? (text_yPos === 'center' ? 'top: 50%;' : 'top: 25%;') : ''
     const textPos = !title ? `margin-top: -${(parseInt(inside_txt_fontSize) / 2)}px; ${where_textYpos}` : ''
 
-    x_button ? (title ? title_div.appendChild(x_button_div) : insideTxt_div.appendChild(x_button_div)) : null
+    if(main.querySelectorAll('.x_button').length == 0){
+      x_button ? (title ? title_div.appendChild(x_button_div) : x_button_pos.appendChild(x_button_div)) : null
+    }
 
     insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${textPos}; font-size: ${inside_txt_fontSize}; ${inside_text_color}`
 
@@ -127,7 +141,7 @@ class Box {
   }
 
   show(closeBox = false, timer = true) {
-    const showThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']")]
+    const showThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.transfer.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']")]
 
     showThese.forEach((el) => {
       timer ? (!closeBox ? (el.style.display = 'block', setTimeout(() => { this.show(true, false) }, this.settings.hideAfter) ) : el.remove()) : (!closeBox ? el.style.display = 'block' : el.remove())
@@ -135,7 +149,7 @@ class Box {
   }
 
   fade(closeBox = false, fTime = 0) {
-    const fadeThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']")]
+    const fadeThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.transfer.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']")]
     const fadeOutTime =  fTime !== 0 ? fTime : this.settings.fadeOutTime
 
     fadeThese.forEach((el) => {
@@ -158,3 +172,4 @@ class Box {
     return this
   }
 }
+
