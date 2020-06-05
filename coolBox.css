@@ -64,12 +64,12 @@
 
 [data-popup-holder='title'].styleTitle .x_button {
     float: right;
-    padding-top: 2.5px;
+    padding-top: 0.5px;
     font-weight: bold;
     cursor: pointer;
 }
 
-[data-popup-holder='insideTxt'] .x_button {
+[data-popup-holder='main'] .x_button_pos {
     position: absolute;
     font-size: 11px;
     right: 9px;
