@@ -1,5 +1,5 @@
 class Box {
-  constructor( onEl, setting = {} ) {
+  constructor ( onEl, setting = {} ) {
     this.onElement = onEl
     this.settings = {
       top: setting.top || '50%', left: setting.left || '50%',
@@ -80,14 +80,13 @@ class Box {
 
      if(this.transfer.not_only_this) {
        !styling.actLikePopup && this.transfer.typeAs !== 'dialog' ? document.querySelector(this.onElement).appendChild(main) : (containers.appendChild(main), document.querySelector(this.onElement).appendChild(containers))
-    }
+     }
 
     // Set the 'z-index' to a value that's greater than itself
     if (this.settings.if_electron) {
-      const which_el = styling.actLikePopup ? "[data-popup-holder='container']" : "[data-popup-holder='main']";
-      const this_zIndex = window.document.defaultView.getComputedStyle(document.querySelector(which_el))
-        .getPropertyValue('z-index');
-      document.querySelectorAll(this.settings.if_electron).forEach((el) => { el.style.zIndex = (this_zIndex + 1) })
+      const which_el = styling.actLikePopup || this.transfer.typeAs === 'dialog' ? "[data-popup-holder='container']" : "[data-popup-holder='main']";
+      const this_zIndex = window.document.defaultView.getComputedStyle(document.querySelector(which_el)).getPropertyValue('z-index');
+      document.querySelectorAll(this.settings.if_electron).forEach((el) => { el.style.zIndex = eval(parseInt(this_zIndex) + 11) })
     }
 
     this.settings.autocloser ? (this.settings.fadeInTime ? this.fade() : this.show(false, true)) : this.show(false, false)
@@ -171,5 +170,3 @@ class Box {
 
     return this
   }
-}
-
