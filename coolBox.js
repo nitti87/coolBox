@@ -170,3 +170,4 @@ class Box {
 
     return this
   }
+}
