@@ -69,7 +69,8 @@
     cursor: pointer;
 }
 
-[data-popup-holder='main'] .x_button_pos {
+[data-popup-holder='main'] .x_button_pos,
+[data-popup-holder='dialogMain'] .x_button_pos {
     position: absolute;
     font-size: 11px;
     right: 9px;
