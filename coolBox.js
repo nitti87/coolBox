@@ -1,10 +1,10 @@
 class Box {
-  constructor ( onEl, setting = {} ) {
+  constructor( onEl, setting = {} ) {
     this.onElement = onEl
     this.settings = {
       top: setting.top || '50%', left: setting.left || '50%',
-      height: setting.height || '50px', 
-      width: setting.width || '180px',
+      height: setting.height || undefined, 
+      width: setting.width || undefined,
       if_electron: navigator.userAgent.indexOf("Electron") >= 0 ? setting.electron || false : false,
       fadeInTime: typeof setting.fade === 'object' ? setting.fade.fadeInTime || false : false,
       waitForFadeOut: typeof setting.fade === 'object' && setting.fade.fadeInTime ? setting.fade.waitForFadeOut || 3000 : undefined,
@@ -26,13 +26,22 @@ class Box {
       title_bgColor: styleAs.title_bgColor || '#0000000d',
       dialog_boxShadow: typeof styleAs.dialog !== 'object' ? styleAs.dialog_boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)' : styleAs.dialog.boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)',
       startFrom: styleAs.startFrom || 'bottom left',
+      x_button_dialog: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_pos || 'in' : 'in', 
+      x_button_top: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_top || '-12px' : '-12px', 
+      x_button_right: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_right || '-25px' : '-25px', 
       only_this: styleAs.only_this || false
     }
 
     this.transfer = {
       typeAs: as_what.toLowerCase(),
-      not_only_this: (document.querySelectorAll("[data-onlythis='true']").length == 0 && !styling.only_this) || document.querySelectorAll(`[data-popup-holder='${!styling.actLikePopup && as_what.toLowerCase() !== 'dialog' ? 'main' : 'container'}']`).length == 0,
-      which_index: 0
+      not_only_this: (document.querySelectorAll("[data-onlythis='true']").length === 0 && !styling.only_this) || document.querySelectorAll(`[data-popup-holder='${!styling.actLikePopup && as_what.toLowerCase() !== 'dialog' ? 'main' : 'container'}']`).length === 0,
+      which_index: 0, 
+      x_button_dialog_position: styling.x_button_dialog, 
+      x_button_top_right: {
+        top: styling.x_button_top, 
+        right: styling.x_button_right
+      }, 
+      title_bgColor: styling.title_bgColor
     }
 
     const [containers, main] = [document.createElement('div'), document.createElement('div')]
@@ -43,9 +52,14 @@ class Box {
     (styling.actLikePopup ? `top: ${this.settings.top}; left: ${this.settings.left}; transform: translate(-${this.settings.top}, -${this.settings.left}` : '') : 
     `background-color: ${styling.dialog_bgColor}; box-shadow: ${styling.dialog_boxShadow}`
 
-    main.style.cssText = `height: ${this.settings.height}; width: ${this.settings.width}; ${styleMain}; ${styling.main_boxShadow} ${styling.main_bgColor} `
+    const [height, width] = [
+      this.settings.height === undefined ? (this.transfer.typeAs !== 'dialog' ? '50px' : '259px') : this.settings.height, 
+      this.settings.width === undefined ? (this.transfer.typeAs !== 'dialog' ? '180px' : '359px') : this.settings.width
+    ]
+
+    main.style.cssText = `height: ${height}; width: ${width}; ${styleMain}; ${styling.main_boxShadow} ${styling.main_bgColor} `
     main.setAttribute('data-popup-holder', this.transfer.typeAs !== 'dialog' ? 'main' : 'dialogMain')
-    main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>`
+    main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>` 
 
     if (!styling.actLikePopup && this.transfer.typeAs !== 'dialog') { 
       const mainLength = document.querySelectorAll("[data-popup-holder='main']").length
@@ -54,6 +68,7 @@ class Box {
       main.setAttribute('data-index', mainLength)
       styling.only_this ? main.setAttribute('data-onlythis', true) : undefined
       main.setAttribute('data-location', styling.startFrom)
+      
       this.transfer.which_index = this.transfer.not_only_this ? mainLength : mainLength - 1
 
       const [winHeight, prev_el] = [ 
@@ -64,16 +79,16 @@ class Box {
 
       switch (styling.startFrom) {
         case 'bottom left':
-          main.style.cssText += `top: ${winHeight - parseInt(this.settings.height) - 25 - (document.querySelectorAll("[data-location='bottom left'").length * new_position)}px; left: 30px`
+          main.style.cssText += `top: ${winHeight - parseInt(this.settings.height) - 25 - (document.querySelectorAll("[data-location='bottom left']").length * new_position)}px; left: 30px`
           break;
         case 'bottom right':
-          main.style.cssText += `top: ${winHeight - parseInt(this.settings.height) - 25 - (document.querySelectorAll("[data-location='bottom right'").length * new_position)}px; right: 30px`
+          main.style.cssText += `top: ${winHeight - parseInt(this.settings.height) - 25 - (document.querySelectorAll("[data-location='bottom right']").length * new_position)}px; right: 30px`
           break;
         case 'top left':
-          main.style.cssText += `top: ${40 + (document.querySelectorAll("[data-location='top left'").length * new_position)}px; left: 30px`
+          main.style.cssText += `top: ${40 + (document.querySelectorAll("[data-location='top left']").length * new_position)}px; left: 30px`
           break;
         case 'top right':
-          main.style.cssText += `top: ${40 + (document.querySelectorAll("[data-location='top left'").length * new_position)}px; right: 30px`
+          main.style.cssText += `top: ${40 + (document.querySelectorAll("[data-location='top left']").length * new_position)}px; right: 30px`
           break;
       }
     }
@@ -110,27 +125,32 @@ class Box {
       typeof txt === 'object' && typeof txt.updateText === 'function' ? txt.updateText : undefined
     ]
 
-    const [title_div, x_button_div, x_button_pos] = [main.children[0].firstElementChild, document.createElement('div'), document.createElement('div')]
+    this.transfer['title'] = title
+
+    const [title_div, x_button_div, x_button_pos] = [
+      main.children[0].firstElementChild, 
+      document.createElement('div'), 
+      document.createElement('div')
+    ]
 
     x_button_div.innerHTML = '&#10005;'
     x_button_div.classList.add('x_button')
     x_button_div.addEventListener('click', () => { this.settings.autocloser ? (this.settings.fadeInTime ? this.fade(true) : this.show(true, true)) : this.show(true, false) })
     
     insideTxt_div.setAttribute('data-popup-holder', 'insideTxt')
-    main.appendChild(insideTxt_div)
+    this.transfer.typeAs !== 'dialog' ? main.appendChild(insideTxt_div) : ''
     
     x_button_pos.classList.add('x_button_pos')
-    main.appendChild(x_button_pos)
+    !title ? main.appendChild(x_button_pos) : ''
 
     !updateText ? insideTxt_div.innerText = inside_txt : updateText(insideTxt_div)
 
-    title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.style.cssText = titleText_color, title_div.parentElement.classList.add('styleTitleHead')) : null
-    title_div.style.fontSize = titleText_fontSize
+    title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.style.cssText = titleText_color, title_div.style.fontSize = titleText_fontSize, title_div.parentElement.classList.add('styleTitleHead')) : null
 
     const where_textYpos = text_yPos ? (text_yPos === 'center' ? 'top: 50%;' : 'top: 25%;') : ''
     const textPos = !title ? `margin-top: -${(parseInt(inside_txt_fontSize) / 2)}px; ${where_textYpos}` : ''
 
-    if(main.querySelectorAll('.x_button').length == 0){
+    if(main.querySelectorAll('.x_button').length === 0) {
       x_button ? (title ? title_div.appendChild(x_button_div) : x_button_pos.appendChild(x_button_div)) : null
     }
 
@@ -167,6 +187,90 @@ class Box {
     const fadeOutTime = typeof option === 'object' && option.fadeOutTime ? option.fadeOutTime : undefined
 
     fadeOutTime ? this.fade(true, fadeOutTime) : this.show(true, false)
+
+    return this
+  }
+
+  html(option) {
+    if(this.transfer.typeAs !== 'dialog') {
+      return console.error(`It's has to be a dialog, not ${this.transfer.typeAs}`)
+    }
+
+    const [dialogMain_inner, dialog_footer, dialog_main, x_button_pos, x_button_div, x_button, title] = [ 
+      document.createElement('div'), document.createElement('div'), 
+      document.querySelector("[data-popup-holder='dialogMain']"), 
+      document.createElement('div'), document.createElement('div'), 
+      this.settings.x_button, 
+      this.transfer.title
+    ]
+
+    let [element, elementWidthInnerHtml] = ['', ['div', 'label', 'a']]
+
+    x_button_div.innerHTML = '&#10005;'
+    x_button_div.classList.add('x_button')
+    x_button_div.addEventListener('click', () => { this.settings.autocloser ? (this.settings.fadeInTime ? this.fade(true) : this.show(true, true)) : this.show(true, false) })
+
+    dialog_footer.setAttribute('data-popup-holder', 'dialog_footer')
+    dialogMain_inner.setAttribute('data-popup-holder', 'dialogMain_inner')
+
+    x_button_pos.classList.add('x_button_pos')
+    !title ? dialogMain_inner.appendChild(x_button_pos) : null
+    
+    const title_div = dialog_main.children[0].firstElementChild
+    title ? (title_div.style.width = '95%', title_div.parentElement.style.position = 'relative') : null
+
+    dialog_main.appendChild(dialogMain_inner)
+    dialog_main.appendChild(dialog_footer)
+
+    if(x_button) {
+      title === undefined ? x_button_pos.appendChild(x_button_div) : ''
+      this.transfer.x_button_dialog_position !== 'in' && !title ? (x_button_pos.style.right = this.transfer.x_button_top_right.right, 
+        x_button_pos.style.top = this.transfer.x_button_top_right.top) 
+      : null
+      x_button_pos.style.fontSize = '18px'
+    }
+    
+    option.map(objectInArray => {
+      for (let options in objectInArray) {
+        element = options !== 'main' && options !== 'footer' ? options : undefined
+
+        let [style, className, id, HTML_or_value, type, imgSrc, labelFor, mainOrFooter, inMainOrFooter, createEl, keyup, keydown, click] = [
+          objectInArray[options].style, 
+          objectInArray[options].class, 
+          objectInArray[options].id, 
+          elementWidthInnerHtml.includes(element) ? objectInArray[options].html : objectInArray[options].value, 
+          objectInArray[options].type, 
+          element === 'img' ? objectInArray[options].src : undefined, 
+          element === 'label' ? objectInArray[options].label : undefined, 
+          !element && (options === 'main' || options === 'footer') ? (options === 'main' ? dialogMain_inner : dialog_footer) : undefined, 
+          objectInArray[options].inMain || (element !== 'button'),
+          undefined, 
+          objectInArray[options].keyup, 
+          objectInArray[options].keydown, 
+          objectInArray[options].click
+        ]
+
+        if (element) {
+          createEl = document.createElement(element)
+          style ? createEl.style.cssText = style : undefined
+          className ? createEl.setAttribute('class', className) : undefined
+          id ? createEl.setAttribute('id', id) : undefined
+          type ? createEl.setAttribute('type', type) : (element === 'input' ? createEl.setAttribute('type', 'text') : undefined)
+          HTML_or_value ? (elementWidthInnerHtml.includes(element) ? createEl.innerHTML = HTML_or_value : createEl.setAttribute('value', HTML_or_value)) : undefined
+          imgSrc && element === 'img' ? createEl.setAttribute('src', imgSrc) : undefined 
+          labelFor && element === 'label' ? createEl.setAttribute('label', labelFor) : undefined
+
+          inMainOrFooter ? dialogMain_inner.appendChild(createEl) : dialog_footer.appendChild(createEl)
+
+          typeof keyup === 'function' ? createEl.addEventListener('keyup', (e) => { keyup(e) }) : undefined
+          typeof keydown === 'function' ? createEl.addEventListener('keydown', (e) => { keydown(e) }) : undefined
+          typeof click === 'function' ? createEl.addEventListener('click', (e) => { click(e) }) : undefined
+        }
+
+        mainOrFooter ? (style ? mainOrFooter.style.cssText = style : undefined) : undefined
+        mainOrFooter ? (className ? mainOrFooter.setAttribute('class', className) : undefined) : undefined
+      }
+    }) 
 
     return this
   }
