@@ -27,8 +27,10 @@ class Box {
       dialog_boxShadow: typeof styleAs.dialog !== 'object' ? styleAs.dialog_boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)' : styleAs.dialog.boxShadow || '0 0 1px rgba(0, 0, 0, 0.774)',
       startFrom: styleAs.startFrom || 'bottom left',
       x_button_dialog: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_pos || 'in' : 'in', 
-      x_button_top: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_top || '-12px' : '-12px', 
-      x_button_right: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_right || '-25px' : '-25px', 
+      x_button_top: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_top || '-32px' : '-32px', 
+      x_button_right: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.x_button_right || '-35px' : '-35px', 
+      custom_x_button_class:  typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.custom_x_button_class || undefined : undefined,
+      closeOnBackground: typeof styleAs.dialog === 'object' && as_what === 'dialog' ? styleAs.dialog.closeOnBackground || true : true, 
       only_this: styleAs.only_this || false
     }
 
@@ -41,7 +43,9 @@ class Box {
         top: styling.x_button_top, 
         right: styling.x_button_right
       }, 
-      title_bgColor: styling.title_bgColor
+      closeOnBg: styling.closeOnBackground,
+      title_bgColor: styling.title_bgColor, 
+      custom_x_button_class: styling.custom_x_button_class
     }
 
     const [containers, main] = [document.createElement('div'), document.createElement('div')]
@@ -222,12 +226,19 @@ class Box {
     dialog_main.appendChild(dialogMain_inner)
     dialog_main.appendChild(dialog_footer)
 
+    this.transfer.closeOnBg ?
+      document.querySelector("[data-popup-holder='container']").addEventListener('click', (e) => {
+        e.target.getAttribute('data-popup-holder') === 'container' ?
+        this.settings.autocloser ? (this.settings.fadeInTime ? this.fade(true) : this.show(true, true)) : this.show(true, false) : undefined
+      }) : undefined
+
     if(x_button) {
       title === undefined ? x_button_pos.appendChild(x_button_div) : ''
       this.transfer.x_button_dialog_position !== 'in' && !title ? (x_button_pos.style.right = this.transfer.x_button_top_right.right, 
         x_button_pos.style.top = this.transfer.x_button_top_right.top) 
       : null
       x_button_pos.style.fontSize = '18px'
+      this.transfer.custom_x_button_class ? x_button_pos.classList.add(this.transfer.custom_x_button_class) : undefined
     }
     
     option.map(objectInArray => {
