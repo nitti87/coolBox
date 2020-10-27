@@ -208,7 +208,7 @@ class Box {
       this.transfer.title
     ]
 
-    let [element, elementWidthInnerHtml] = ['', ['div', 'label', 'a']]
+    let [element, elementWidthInnerHtml] = ['', ['div', 'label', 'a', 'button']]
 
     x_button_div.innerHTML = '&#10005;'
     x_button_div.classList.add('x_button')
@@ -245,7 +245,7 @@ class Box {
       for (let options in objectInArray) {
         element = options !== 'main' && options !== 'footer' ? options : undefined
 
-        let [style, className, id, HTML_or_value, type, imgSrc, labelFor, mainOrFooter, inMainOrFooter, createEl, keyup, keydown, click] = [
+        let [style, className, id, HTML_or_value, type, imgSrc, labelFor, mainOrFooter, inMainOrFooter, createEl, keyup, keydown, click, placeHolder] = [
           objectInArray[options].style, 
           objectInArray[options].class, 
           objectInArray[options].id, 
@@ -258,7 +258,8 @@ class Box {
           undefined, 
           objectInArray[options].keyup, 
           objectInArray[options].keydown, 
-          objectInArray[options].click
+          objectInArray[options].click, 
+          objectInArray[options].placeholder
         ]
 
         if (element) {
@@ -269,6 +270,7 @@ class Box {
           type ? createEl.setAttribute('type', type) : (element === 'input' ? createEl.setAttribute('type', 'text') : undefined)
           HTML_or_value ? (elementWidthInnerHtml.includes(element) ? createEl.innerHTML = HTML_or_value : createEl.setAttribute('value', HTML_or_value)) : undefined
           imgSrc && element === 'img' ? createEl.setAttribute('src', imgSrc) : undefined 
+          placeHolder && element === 'input' ? createEl.setAttribute('placeholder', placeHolder) : undefined
           labelFor && element === 'label' ? createEl.setAttribute('label', labelFor) : undefined
 
           inMainOrFooter ? dialogMain_inner.appendChild(createEl) : dialog_footer.appendChild(createEl)
