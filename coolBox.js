@@ -254,7 +254,7 @@ class Box {
           element === 'img' ? objectInArray[options].src : undefined, 
           element === 'label' ? objectInArray[options].label : undefined, 
           !element && (options === 'main' || options === 'footer') ? (options === 'main' ? dialogMain_inner : dialog_footer) : undefined, 
-          objectInArray[options].inMain || (element !== 'button'),
+          typeof objectInArray[options].inMain === 'boolean' ? objectInArray[options].inMain : (element !== 'button'),
           undefined, 
           objectInArray[options].keyup, 
           objectInArray[options].keydown, 
