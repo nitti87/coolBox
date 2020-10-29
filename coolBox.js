@@ -236,9 +236,8 @@ class Box {
       title === undefined ? x_button_pos.appendChild(x_button_div) : ''
       this.transfer.x_button_dialog_position !== 'in' && !title ? (x_button_pos.style.right = this.transfer.x_button_top_right.right, 
         x_button_pos.style.top = this.transfer.x_button_top_right.top) 
-      : null
-      x_button_pos.style.fontSize = '18px'
-      this.transfer.custom_x_button_class ? x_button_pos.classList.add(this.transfer.custom_x_button_class) : undefined
+      : null      
+      this.transfer.custom_x_button_class ? x_button_pos.classList.add(this.transfer.custom_x_button_class) : x_button_pos.style.fontSize = '18px'
     }
     
     option.map(objectInArray => {
