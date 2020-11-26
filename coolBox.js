@@ -79,14 +79,15 @@ class Box {
         window.innerHeight, 
         document.querySelector(`[data-index='${this.transfer.which_index - 1}']`),
       ]
+      
       const new_position = (prev_el === null ? 0 : prev_el.clientHeight + 15)
 
       switch (styling.startFrom) {
         case 'bottom left':
-          main.style.cssText += `top: ${winHeight - parseInt(this.settings.height) - 25 - (document.querySelectorAll("[data-location='bottom left']").length * new_position)}px; left: 30px`
+          main.style.cssText += `top: ${winHeight - parseInt(height) - 25 - (document.querySelectorAll("[data-location='bottom left']").length * new_position)}px; left: 30px`
           break;
         case 'bottom right':
-          main.style.cssText += `top: ${winHeight - parseInt(this.settings.height) - 25 - (document.querySelectorAll("[data-location='bottom right']").length * new_position)}px; right: 30px`
+          main.style.cssText += `top: ${winHeight - parseInt(height) - 25 - (document.querySelectorAll("[data-location='bottom right']").length * new_position)}px; right: 30px`
           break;
         case 'top left':
           main.style.cssText += `top: ${40 + (document.querySelectorAll("[data-location='top left']").length * new_position)}px; left: 30px`
