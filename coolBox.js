@@ -2,7 +2,7 @@ class Box {
   constructor( onEl, setting = {} ) {
     this.onElement = onEl
     this.settings = {
-      top: setting.top || '50%', left: setting?.left || '50%',
+      top: setting.top || '50%', left: setting.left || '50%',
       height: setting.height || undefined, 
       width: setting.width || undefined,
       if_electron: navigator.userAgent.indexOf("Electron") >= 0 ? setting.electron || false : false,
@@ -129,8 +129,6 @@ class Box {
     ]
 
     this.transfer['title'] = title
-    console.log(main)
-
 
     const [title_div, x_button_div, x_button_pos] = [
       main.children[0].firstElementChild, 
