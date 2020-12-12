@@ -58,7 +58,7 @@ class Box {
     `background-color: ${styling.dialog_bgColor}; box-shadow: ${styling.dialog_boxShadow}`
 
     const [height, width] = [
-      this.settings.height === undefined ? (this.transfer.typeAs !== 'dialog' ? '50px' : '259px') : this.settings.height, 
+      this.settings.height === undefined ? (this.transfer.typeAs !== 'dialog' ? '46px' : '259px') : this.settings.height,
       this.settings.width === undefined ? (this.transfer.typeAs !== 'dialog' ? '180px' : '359px') : this.settings.width
     ]
 
@@ -113,19 +113,22 @@ class Box {
   }
 
   text(txt) {
-    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div, updateText] = [
+    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div, updateText, imageSrc, imageWidth, imageHeight] = [
       typeof txt === 'object' ? (typeof txt.title === 'object' ? txt.title.text : txt.titleText) || '' : '',
       typeof txt === 'object' && typeof txt.title === 'object' ? txt.title.fontSize || '12px' : '12px', 
       typeof txt === 'object' && typeof txt.title === 'object' ? `color: ${txt.title.color}` || '' : '', 
       this.settings.x_button,
       typeof txt === 'object' ? (typeof txt.inside === 'object' ? txt.inside.text : txt.inside_text) || '' : txt,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.fontSize || '14px' : '14px', 
-      typeof txt === 'object' && typeof txt.inside === 'object' ? `color: ${txt.inside.color}`|| '' : '',
+      typeof txt === 'object' && typeof txt.inside === 'object' ? `color: ${txt.inside.color}` || '' : '',
       typeof txt === 'object' && typeof txt.text_yPos === 'string' ? ((/\b(center|top)\b/).test(txt.text_yPos.toLowerCase()) ? txt.text_yPos.toLowerCase() : false) : false,
       typeof txt === 'object' && typeof txt.inside === 'object' ? txt.inside.paddingLeft || '10px' : '10px',
       this.transfer.typeAs !== 'dialog' ? document.querySelector(!this.transfer.actLikePopup ? `[data-index='${this.transfer.which_index}']` : `[data-popup-holder='main']` ) : document.querySelector(`[data-popup-holder='dialogMain']`),
       this.transfer.not_only_this ? document.createElement('div') : document.querySelector('[data-popup-holder="insideTxt"]'),
-      typeof txt === 'object' && typeof txt.updateText === 'function' ? txt.updateText : undefined
+      typeof txt === 'object' && typeof txt.updateText === 'function' ? txt.updateText : undefined,
+      typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.src || undefined : undefined,
+      typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.width || undefined : undefined,
+      typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.height || undefined : undefined
     ]
 
     this.transfer['title'] = title
@@ -140,17 +143,31 @@ class Box {
     x_button_div.classList.add('x_button')
     x_button_div.addEventListener('click', () => { this.settings.autocloser ? (this.settings.fadeInTime ? this.fade(true) : this.show(true, true)) : this.show(true, false) })
     
-    insideTxt_div.setAttribute('data-popup-holder', 'insideTxt')
+    insideTxt_div.setAttribute('data-popup-holder', 'insideTxt_div')
+
+    const [image, insideTxt_text] = [document.createElement('img'), document.createElement('div')]
+    image.setAttribute('data-popup-holder', 'insideTxt_image')
+    image.setAttribute('src', imageSrc || '#')
+    image.style.width = imageWidth || ''
+    image.style.height = imageHeight || ''
+    imageSrc ? insideTxt_div.append(image) : undefined
+
+    insideTxt_text.setAttribute('data-popup-holder', 'insideTxt_text')
+    insideTxt_div.append(insideTxt_text)
+
     this.transfer.typeAs !== 'dialog' ? main.appendChild(insideTxt_div) : ''
-    
+
+    const insideTxt_div_fontSize = parseInt(window.getComputedStyle(insideTxt_div).getPropertyValue('font-size'))
+    image.style.marginTop = `${eval(insideTxt_div_fontSize - (image.height / 2) - (insideTxt_div_fontSize / 2))}px`
+
     x_button_pos.classList.add('x_button_pos')
     !title ? main.appendChild(x_button_pos) : ''
 
-    !updateText ? insideTxt_div.innerText = inside_txt : updateText(insideTxt_div)
+    !updateText ? insideTxt_text.innerText = inside_txt : updateText(insideTxt_text)
 
     title ? (title_div.innerText = title, title_div.classList.add('styleTitle'), title_div.style.cssText = titleText_color, title_div.style.fontSize = titleText_fontSize, title_div.parentElement.classList.add('styleTitleHead')) : null
 
-    const where_textYpos = text_yPos ? (text_yPos === 'center' ? 'top: 50%;' : 'top: 25%;') : ''
+    const where_textYpos = text_yPos ? (text_yPos === 'center' ? 'top: 50%;' : 'top: 25%;') : 'top: 50%;'
     const textPos = !title ? `margin-top: -${(parseInt(inside_txt_fontSize) / 2)}px; ${where_textYpos}` : ''
 
     if(main.querySelectorAll('.x_button').length === 0) {
