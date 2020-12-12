@@ -12,6 +12,7 @@
 [data-popup-holder='main'],
 [data-popup-holder='dialogMain'] {
     position: absolute;
+    font-size: .874rem;
     font-family: "Segoe UI", sans-serif;
     display: none;
 }
@@ -23,9 +24,9 @@
 }
 
 [data-popup-holder='main'].popup_default {
-    background: #e4e9ef;
-    color: #000000; 
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.774), 0 0 1px rgba(0, 0, 0, 0.774) inset;
+    background: #ffffff;
+    color: #000;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.67), 0 0 1px rgba(0, 0, 0, 0.64) inset;
 }
 
 [data-popup-holder='main'].popup_info {
@@ -46,14 +47,17 @@
     box-shadow: 0 0 2px rgba(216, 0, 11, 0.774), 0 0 1px rgba(216, 0, 11, 0.747) inset;
 }
 
-[data-popup-holder='insideTxt'] {
-    position: absolute;
-    top: 50%;
+[data-popup-holder='insideTxt_div'] {
+    position: relative;
+    display: flex;
+}
+
+[data-popup-holder='insideTxt_image'] {
+    margin-right: 8px;
 }
 
 [data-popup-holder='titlebar'].styleTitleHead {
-    position: absolute;
-    width: 100%;
+    margin-bottom: 5px;
 }
 
 [data-popup-holder='title'].styleTitle {
