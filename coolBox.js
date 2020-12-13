@@ -113,7 +113,7 @@ class Box {
   }
 
   text(txt) {
-    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div, updateText, imageSrc, imageWidth, imageHeight] = [
+    const [title, titleText_fontSize, titleText_color, x_button, inside_txt, inside_txt_fontSize, inside_text_color, text_yPos, inside_txt_paddingLeft, main, insideTxt_div, updateText, imageSrc, imageWidth, imageHeight, imageAlt] = [
       typeof txt === 'object' ? (typeof txt.title === 'object' ? txt.title.text : txt.titleText) || '' : '',
       typeof txt === 'object' && typeof txt.title === 'object' ? txt.title.fontSize || '12px' : '12px', 
       typeof txt === 'object' && typeof txt.title === 'object' ? `color: ${txt.title.color}` || '' : '', 
@@ -128,7 +128,8 @@ class Box {
       typeof txt === 'object' && typeof txt.updateText === 'function' ? txt.updateText : undefined,
       typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.src || undefined : undefined,
       typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.width || undefined : undefined,
-      typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.height || undefined : undefined
+      typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.height || undefined : undefined,
+      typeof txt === 'object' && typeof txt.image === 'object' ? txt.image.alt || 'image' : undefined
     ]
 
     this.transfer['title'] = title
@@ -150,6 +151,7 @@ class Box {
     image.setAttribute('src', imageSrc || '#')
     image.style.width = imageWidth || ''
     image.style.height = imageHeight || ''
+    image.setAttribute('alt', imageAlt)
     imageSrc ? insideTxt_div.append(image) : undefined
 
     insideTxt_text.setAttribute('data-popup-holder', 'insideTxt_text')
