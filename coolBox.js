@@ -155,9 +155,9 @@ class Box {
     imageSrc ? insideTxt_div.append(image) : undefined
 
     insideTxt_text.setAttribute('data-popup-holder', 'insideTxt_text')
-    insideTxt_div.append(insideTxt_text)
 
     this.transfer.typeAs !== 'dialog' ? main.appendChild(insideTxt_div) : ''
+    insideTxt_div.append(insideTxt_text)
 
     const insideTxt_div_fontSize = parseInt(window.getComputedStyle(insideTxt_div).getPropertyValue('font-size'))
     image.style.marginTop = `${eval(insideTxt_div_fontSize - (image.height / 2) - (insideTxt_div_fontSize / 2))}px`
@@ -177,6 +177,8 @@ class Box {
     }
 
     insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${textPos}; font-size: ${inside_txt_fontSize}; ${inside_text_color}`
+
+    insideTxt_text.style.marginTop = `-${insideTxt_text.getBoundingClientRect().height > 20 ? (insideTxt_text.offsetHeight) / 4 : 0}px`
 
     return this
   }
