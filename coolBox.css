@@ -1,86 +1,86 @@
 
 [data-popup-holder='container'] {
-    position: absolute;
-    height: 100%;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 57;
-    display: none;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 57;
+	display: none;
 }
 
 [data-popup-holder='main'],
 [data-popup-holder='dialogMain'] {
-    position: absolute;
-    font-size: .874rem;
-    font-family: "Segoe UI", sans-serif;
-    display: none;
+	position: absolute;
+	font-size: .874rem;
+	font-family: "Segoe UI", sans-serif;
+	display: none;
 }
 
 [data-popup-holder='dialogMain'] {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 [data-popup-holder='main'].popup_default {
-    background: #ffffff;
-    color: #000;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.67), 0 0 1px rgba(0, 0, 0, 0.64) inset;
+	background: #ffffff;
+	color: #000;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.67), 0 0 1px rgba(0, 0, 0, 0.64) inset;
 }
 
 [data-popup-holder='main'].popup_info {
-    background: #bde5f8;
-    color: #00539bb7;
-    box-shadow: 0 0 2px #00539bb7, 0 0 1px #00539baf inset;
+	background: #bde5f8;
+	color: #00539bb7;
+	box-shadow: 0 0 2px #00539bb7, 0 0 1px #00539baf inset;
 }
 
 [data-popup-holder='main'].popup_warning {
-    background: #FEEFB3;
-    color: #9f5f00c4;
-    box-shadow: 0 0 2px #9f5f00c4, 0 0 1px #9f5f00d2 inset;
+	background: #FEEFB3;
+	color: #9f5f00c4;
+	box-shadow: 0 0 2px #9f5f00c4, 0 0 1px #9f5f00d2 inset;
 }
- 
+
 [data-popup-holder='main'].popup_error {
-    background: #FFBABA;
-    color: rgb(216, 0, 11);
-    box-shadow: 0 0 2px rgba(216, 0, 11, 0.774), 0 0 1px rgba(216, 0, 11, 0.747) inset;
+	background: #FFBABA;
+	color: rgb(216, 0, 11);
+	box-shadow: 0 0 2px rgba(216, 0, 11, 0.774), 0 0 1px rgba(216, 0, 11, 0.747) inset;
 }
 
 [data-popup-holder='insideTxt_div'] {
-    position: relative;
-    display: flex;
+	position: relative;
+	display: flex;
 }
 
 [data-popup-holder='insideTxt_image'] {
-    margin-right: 8px;
+	margin-right: 8px;
 }
 
 [data-popup-holder='titlebar'].styleTitleHead {
-    margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 [data-popup-holder='title'].styleTitle {
-    padding: 5px;
-    width: 92%;
-    margin-top: -2px;
+	padding: 5px;
+	width: 92%;
+	margin-top: -2px;
 }
 
 [data-popup-holder='title'].styleTitle .x_button {
-    float: right;
-    padding-top: 0.5px;
-    font-weight: bold;
-    cursor: pointer;
+	float: right;
+	padding-top: 0.5px;
+	font-weight: bold;
+	cursor: pointer;
 }
 
 [data-popup-holder='main'] .x_button_pos,
 [data-popup-holder='dialogMain'] .x_button_pos {
-    position: absolute;
-    right: 9px;
-    top: 3px;
-    cursor: pointer;
+	position: absolute;
+	right: 9px;
+	top: 3px;
+	cursor: pointer;
 }
 
 [data-popup-holder='main'] .x_button_pos {
-    font-size: 11px;
+	font-size: 11px;
 }
