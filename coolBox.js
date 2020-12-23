@@ -178,8 +178,7 @@ class Box {
 
     insideTxt_div.style.cssText = `padding-left: ${inside_txt_paddingLeft}; ${textPos}; font-size: ${inside_txt_fontSize}; ${inside_text_color}`
 
-    insideTxt_text.style.marginTop = `-${insideTxt_text.getBoundingClientRect().height > 20 ? (insideTxt_text.offsetHeight) / 4 : 0}px`
-
+    setTimeout(() => { insideTxt_text.style.marginTop = `-${parseInt(window.getComputedStyle(insideTxt_text).getPropertyValue('height')) > 20 ? (insideTxt_text.offsetHeight) / 4 : 0}px` }, 7)
     return this
   }
 
