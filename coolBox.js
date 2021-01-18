@@ -66,16 +66,16 @@ class Box {
     main.setAttribute('data-popup-holder', this.transfer.typeAs !== 'dialog' ? 'main' : 'dialogMain')
     this.transfer.typeAs !== 'dialog' ? main.classList.add(`popup_${this.transfer.typeAs}`) : undefined
     main.innerHTML = `<div data-popup-holder="titlebar" style="background-color: ${styling.title_bgColor}"> <div data-popup-holder="title"></div> </div>` 
+    
+    const mainLength = document.querySelectorAll("[data-popup-holder='main']").length
+
+    main.setAttribute('data-index', mainLength)
+    styling.only_this ? main.setAttribute('data-onlythis', true) : undefined
+    main.setAttribute('data-location', styling.startFrom)
+    
+    this.transfer.which_index = this.transfer.not_only_this ? mainLength : mainLength - 1
 
     if (!this.transfer.actLikePopup && this.transfer.typeAs !== 'dialog') {
-      const mainLength = document.querySelectorAll("[data-popup-holder='main']").length
-
-      main.setAttribute('data-index', mainLength)
-      styling.only_this ? main.setAttribute('data-onlythis', true) : undefined
-      main.setAttribute('data-location', styling.startFrom)
-      
-      this.transfer.which_index = this.transfer.not_only_this ? mainLength : mainLength - 1
-
       const [winHeight, prev_el] = [ 
         window.innerHeight, 
         document.querySelector(`[data-index='${this.transfer.which_index - 1}']`),
