@@ -183,7 +183,11 @@ class Box {
   }
 
   show(closeBox = false, timer = true) {
-    const showThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.transfer.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']"), ...document.querySelectorAll("[data-popup-holder='main']")]
+    const showThese = [
+      ...document.querySelectorAll("[data-popup-holder='container']"), 
+      ...document.querySelectorAll("[data-popup-holder='dialogMain']"), 
+      ...document.querySelectorAll(`[data-index='${this.transfer.which_index}']`)
+    ]
 
     showThese.forEach((el) => {
       timer ? (!closeBox ? (el.style.display = 'block', setTimeout(() => { this.show(true, false) }, this.settings.hideAfter) ) : el.remove()) : (!closeBox ? el.style.display = 'block' : el.remove())
@@ -191,7 +195,12 @@ class Box {
   }
 
   fade(closeBox = false, fTime = 0) {
-    const fadeThese = [...document.querySelectorAll("[data-popup-holder='container']"), ...document.querySelectorAll(`[data-index='${this.transfer.which_index}']`), ...document.querySelectorAll("[data-popup-holder='dialogMain']"), ...document.querySelectorAll("[data-popup-holder='main']")]
+    const fadeThese = [
+      ...document.querySelectorAll("[data-popup-holder='container']"), 
+      ...document.querySelectorAll(`[data-index='${this.transfer.which_index}']`), 
+      ...document.querySelectorAll("[data-popup-holder='dialogMain']")
+    ]
+    
     const fadeOutTime =  fTime !== 0 ? fTime : this.settings.fadeOutTime
 
     fadeThese.forEach((el) => {
